@@ -17,8 +17,6 @@ const MovieDetailsPage = () => {
   const { movieId } = useParams();
 
   const location = useLocation();
-  // const backUrl = location.state?.from || '/movies';
-  // console.log('BACKURL:', backUrl.current);
 
   const backLink = useRef(location.state ?? '/');
 
@@ -49,12 +47,10 @@ const MovieDetailsPage = () => {
       <div className={style.rowContainer}>
         <div className={style.posterContainer}>
           <Link to={backLink.current}>
-            {/* <NavLink to={backUrl}> */}
             <button className={style.goBackBtn}>
               <MdOutlineKeyboardDoubleArrowLeft />
               Go back
             </button>
-            {/* </NavLink> */}
           </Link>
           <img
             src={`${IMG_BASE_URL}/w342${movieDetails.poster_path}`}

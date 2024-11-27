@@ -20,7 +20,8 @@ const MovieList = ({ films }) => {
           <li className={style.movieListItem} key={film.id}>
             <Link
               to={`/movies/${film.id}`}
-              state={{ from: `${location.pathname}${location.search}` }}
+              // state={{ from: `${location.pathname}${location.search}` }}
+              state={location}
             >
               {imgUrl ? (
                 <img src={imgUrl} alt={`${film.name}`} />
@@ -31,11 +32,6 @@ const MovieList = ({ films }) => {
                   alt={`Image not available`}
                 />
               )}
-
-              {/* <img
-              src={`${IMG_BASE_URL}/w185${film.poster_path}`}
-              alt="Movie Poster"
-            /> */}
               <p className={style.title}>{film.title}</p>
               <p className={style.rating}>
                 {film.release_date.split('-')[0]} year

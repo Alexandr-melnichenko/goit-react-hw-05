@@ -77,7 +77,13 @@ const MoviesPage = () => {
     <div className={style.container}>
       <SearchBar handleSubmit={handleSubmit} />
       {isLoading && <ProgressBar />}
-      <MovieList films={films} />
+
+      {films.length === 0 && query !== '' ? (
+        <h2>We are sorry. There are no movies for this request!</h2>
+      ) : (
+        <MovieList films={films} />
+      )}
+
       <Toaster />
     </div>
   );
