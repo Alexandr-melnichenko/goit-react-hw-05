@@ -1,20 +1,7 @@
 import axios from 'axios';
-// import { movieId } from '../components/MovieReviews/MovieReviews.jsx';
-
-// axios.defaults.baseURL = 'https://api.themoviedb.org/3/';
-// const BASE_URL = 'https://api.themoviedb.org/';
-
-// const options = {
-//   method: 'GET',
-//   headers: {
-//     accept: 'application/json',
-//     Authorization:
-//       'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhOTk5ZDJmOTZhNzQyZGFjNmQwZTdmZTk2ZjhhNDQ3MCIsIm5iZiI6MTczMjE5NTAyMy42NTI2ODI4LCJzdWIiOiI2NzNmMjkxOGNlNzE4NDM0ZjM4YmY3Y2QiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.ikmXEl_aPErtIkp5ktT4TfQaPFWCYze-wNmhGATm_DY',
-//   },
-// };
 
 const api = axios.create({
-  baseURL: 'https://api.themoviedb.org/3/',
+  baseURL: 'https://api.themoviedb.org/',
   headers: {
     accept: 'application/json',
     Authorization:
@@ -22,38 +9,38 @@ const api = axios.create({
   },
 });
 
-export const fetchReviews = async movieId => {
-  const response = await api.get(`movie/${movieId}/reviews?language=en-US`);
+const options = {
+  headers: {
+    Authorization:
+      'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhOTk5ZDJmOTZhNzQyZGFjNmQwZTdmZTk2ZjhhNDQ3MCIsIm5iZiI6MTczMjIyMDg4NC45ODA5MzA2LCJzdWIiOiI2NzNmMjkxOGNlNzE4NDM0ZjM4YmY3Y2QiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.dyjyV3Oa6sCrCcqOCRiUQpYI4SAwY1DLWVYdLlDvPgY',
+  },
+};
+
+const url = 'https://api.themoviedb.org/3/trending/movie/day?language=en-US';
+
+export const fetchMovies = async () => {
+  const response = await axios.get(url, options);
   return response.data.results;
 };
 
-// export const fetchReviews = async movieId => {
-//   const responseReviews = await axios.get(
-//     `${BASE_URL}3/movie/${movieId}/reviews?language=en-US`,
-//     options
-//   );
-//   return responseReviews;
-// };
+export const fetchReviews = async movieId => {
+  const response = await api.get(`3/movie/${movieId}/reviews?language=en-US`);
+  return response.data.results;
+};
 
-// export const responseReviews = await axios.get(
-//   `${BASE_URL}3/movie/${movieId}/reviews?language=en-US`,
-//   options
-// );
+export const fetchCasts = async movieId => {
+  const response = await api.get(`3/movie/${movieId}/credits?language=en-US`);
+  return response.data.cast;
+};
 
-// export const fetchUserById = async id => {
-//   const { data } = await axios.get(`/users/${id}`);
-//   return data;
-// };
+export const fetchFilmDetails = async movieId => {
+  const response = await api.get(`3/movie/${movieId}?language=en-US`);
+  return response.data;
+};
 
-// const fetchReviews = async movieId => {
-//   try {
-//     // const responseReviews = await axios.get(
-//     //   `${BASE_URL}3/movie/${movieId}/reviews?language=en-US`,
-//     //   options
-//     // );
-//     responseReviews(movieId);
-//     setMovieReviews(responseReviews.data.results);
-//   } catch (error) {
-//     console.error(error);
-//   }
-// };
+export const fetchMoviesSearch = async (query, pageNumber) => {
+  const response = await api.get(
+    `3/search/movie?query=${query}&include_adult=false&language=en-US&page=${pageNumber}&per_page=12`
+  );
+  return response;
+};

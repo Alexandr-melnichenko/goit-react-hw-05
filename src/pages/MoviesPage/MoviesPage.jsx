@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import MovieList from '../../components/MovieList/MovieList';
-import axios from 'axios';
 import SearchBar from '../../components/SearchBar/SearchBar';
 import toast, { Toaster } from 'react-hot-toast';
 import { ProgressBar } from 'react-loader-spinner';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { se } from 'date-fns/locale';
+import { fetchMoviesSearch } from '../../service/api.js';
+import style from './MoviesPage.module.css';
 
 const MoviesPage = () => {
   const [query, setQuery] = useState('');
@@ -32,25 +32,12 @@ const MoviesPage = () => {
 
   // Юз эффект чтобы вытягивать данные из строки запроса
   useEffect(() => {
-    const BASE_URL = 'https://api.themoviedb.org/3/';
-
-    const options = {
-      method: 'GET',
-      headers: {
-        accept: 'application/json',
-        Authorization:
-          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhOTk5ZDJmOTZhNzQyZGFjNmQwZTdmZTk2ZjhhNDQ3MCIsIm5iZiI6MTczMjE5NTAyMy42NTI2ODI4LCJzdWIiOiI2NzNmMjkxOGNlNzE4NDM0ZjM4YmY3Y2QiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.ikmXEl_aPErtIkp5ktT4TfQaPFWCYze-wNmhGATm_DY',
-      },
-    };
-
     if (!query) return;
-    async function fetchMovies() {
+
+    const getData = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get(
-          `${BASE_URL}search/movie?query=${query}&include_adult=true&language=en-US&page=${pageNumber}&per_page=12`,
-          options
-        );
+        const response = await fetchMoviesSearch(query, pageNumber);
         setFilms(prevFilms =>
           pageNumber === 1
             ? response.data.results
@@ -63,10 +50,13 @@ const MoviesPage = () => {
       } finally {
         setIsLoading(false);
       }
-    }
+    };
 
-    fetchMovies();
+    getData();
   }, [query, pageNumber]);
+
+  console.log('Films API:', films);
+  console.log('Total pages:', totalPages);
 
   // Add function for searchBar
   const handleSubmit = (values, { resetForm }) => {
@@ -84,7 +74,7 @@ const MoviesPage = () => {
   };
 
   return (
-    <div>
+    <div className={style.container}>
       <SearchBar handleSubmit={handleSubmit} />
       {isLoading && <ProgressBar />}
       <MovieList films={films} />
@@ -94,8 +84,3 @@ const MoviesPage = () => {
 };
 
 export default MoviesPage;
-
-// fetch('', options)
-//   .then(res => res.json())
-//   .then(res => console.log(res))
-//   .catch(err => console.error(err));

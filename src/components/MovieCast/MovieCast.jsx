@@ -1,8 +1,9 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { fetchCasts } from '../../service/api.js';
+import style from './MovieCast.module.css';
+import imgNotAvailable from '../../img/img_not_available.png';
 
-const BASE_URL = 'https://api.themoviedb.org/';
 const IMG_BASE_URL = 'https://image.tmdb.org/t/p';
 
 const MovieCast = () => {
@@ -10,53 +11,45 @@ const MovieCast = () => {
   const { movieId } = useParams();
 
   useEffect(() => {
-    const options = {
-      method: 'GET',
-      headers: {
-        accept: 'application/json',
-        Authorization:
-          'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhOTk5ZDJmOTZhNzQyZGFjNmQwZTdmZTk2ZjhhNDQ3MCIsIm5iZiI6MTczMjE5NTAyMy42NTI2ODI4LCJzdWIiOiI2NzNmMjkxOGNlNzE4NDM0ZjM4YmY3Y2QiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.ikmXEl_aPErtIkp5ktT4TfQaPFWCYze-wNmhGATm_DY',
-      },
-    };
+    if (!movieId) return;
 
-    const fetchCastDetails = async movieId => {
+    const getData = async () => {
       try {
-        const response = await axios.get(
-          `${BASE_URL}3/movie/${movieId}/credits?language=en-US`,
-          options
-          // 'https://api.themoviedb.org/3/configuration',
-          // options
-        );
-        setMovieCast(response.data.cast);
+        const data = await fetchCasts(movieId);
+        setMovieCast(data);
       } catch (error) {
-        console.error(error);
+        console.error('Error fetching casts:', error);
       }
     };
 
-    fetchCastDetails(movieId);
+    getData();
   }, [movieId]);
 
   console.log('movieCast:', movieCast);
 
-  return (
-    <ul>
-      {movieCast.map(cast => (
-        <li key={cast.id}>
-          <img src={`${IMG_BASE_URL}/w185${cast.profile_path}`}></img>
-          <p>Actor: {cast.name}</p>
-          <p>Character: {cast.character}</p>
-        </li>
-      ))}
+  return movieCast.length === 0 ? (
+    <h2>There are no actors here.</h2>
+  ) : (
+    <ul className={style.castList}>
+      {movieCast.map(cast => {
+        const imgUrl = cast.profile_path
+          ? `${IMG_BASE_URL}/w185${cast.profile_path}`
+          : null;
+
+        return (
+          <li className={style.castItem} key={cast.id}>
+            {imgUrl ? (
+              <img src={imgUrl} alt={`${cast.name}`} />
+            ) : (
+              <img src={imgNotAvailable} alt={`Image not available`} />
+            )}
+            <p className={style.title}> {cast.name}</p>
+            <p className={style.content}>Character: {cast.character}</p>
+          </li>
+        );
+      })}
     </ul>
   );
 };
 
 export default MovieCast;
-
-// fetch(
-//   'https://api.themoviedb.org/3/movie/558449/credits?language=en-US',
-//   options
-// )
-//   .then(res => res.json())
-//   .then(res => console.log(res))
-//   .catch(err => console.error(err));
